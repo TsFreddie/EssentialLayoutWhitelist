@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("label", "adb shell pm grant in.tsdo.essentialtools android.permission.WRITE_SECURE_SETTINGS");
+                ClipData clip = ClipData.newPlainText("label", "adb shell pm grant in.tsdo.elw android.permission.WRITE_SECURE_SETTINGS");
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, R.string.copied_adb, Toast.LENGTH_SHORT).show();
             }
