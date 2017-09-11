@@ -10,19 +10,20 @@ If your device is rooted, you will be prompted to use root method.
 If the root method failed, please consider using ADB.
 
 To grant permission using ADB:
-0. Install the app, plug in your phone to your computer, open the app.
-1. If you don't have ADB already, get it using following links:
+
+  0. Install the app, plug your phone to your computer, open the app.
+  1. If you don't have ADB already, get it using following links:
 [Windows](https://dl.google.com/android/repository/platform-tools-latest-windows.zip)
 [MacOS](https://dl.google.com/android/repository/platform-tools-latest-darwin.zip)
 [Linux](https://dl.google.com/android/repository/platform-tools-latest-linux.zip)
-2. Extract platform tools.
-3. Open cmd or terminal and goto the directory where you just extracted the tools to
-4. Enter following command:
+  2. Extract platform tools.
+  3. Open cmd or terminal and goto the directory where you just extracted the tools to
+  4. Enter following command:
 ```bash
 ./adb shell pm grant in.tsdo.essentialtools android.permission.WRITE_SECURE_SETTINGS
 ```
-5. On your phone, press "Check Again".
-6. Profit.
+  5. On your phone, press "Check Again".
+  6. Profit.
 
 # Restore to default
 The default configuration may not represent Essential's official whitelist.
