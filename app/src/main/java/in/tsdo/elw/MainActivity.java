@@ -1,4 +1,4 @@
-package in.tsdo.essentialtools;
+package in.tsdo.elw;
 
 import android.Manifest;
 import android.app.DialogFragment;
@@ -16,8 +16,8 @@ import android.widget.Toast;
 import java.io.DataOutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String SYSTEM_WHITELIST = "com.android.egg,com.google.android.calculator,com.google.android.calendar,com.essential.klik,com.android.chrome,com.google.android.deskclock,com.google.android.contacts,com.google.android.gm,com.google.android.googlequicksearchbox,com.android.vending,com.android.launcher3,com.google.android.apps.maps,com.google.android.apps.messaging,com.google.android.dialer,com.google.android.apps.photos,com.google.android.youtube,com.android.settings,com.android.phone";
-    public static String DEFAULT_WHITELIST = SYSTEM_WHITELIST + "com.google.android.music,com.google.android.play.games,com.google.android.apps.docs,com.google.android.apps.magazines,com.google.android.videos";
+    public static final String DEFAULT_SYSTEM_WHITELIST = "com.android.egg,com.google.android.calculator,com.google.android.calendar,com.essential.klik,com.android.chrome,com.google.android.deskclock,com.google.android.contacts,com.google.android.gm,com.google.android.googlequicksearchbox,com.android.vending,com.android.launcher3,com.google.android.apps.maps,com.google.android.apps.messaging,com.google.android.dialer,com.google.android.apps.photos,com.google.android.youtube,com.android.settings,com.android.phone,";
+    public static String DEFAULT_WHITELIST = DEFAULT_SYSTEM_WHITELIST + "com.google.android.music,com.google.android.play.games,com.google.android.apps.docs,com.google.android.apps.magazines,com.google.android.videos,";
     private boolean isEnabled = false;
 
     @Override

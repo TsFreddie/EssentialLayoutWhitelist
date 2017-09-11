@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Essential Layout Whitelist</string>
+    <string name="app_name">Essential Layout Whitelist Editor</string>
     <string name="root_grant">Root detected, do you want to grant me permission using root?</string>
-    <string name="adb_instruction">This app needs WRITE_SECURE_SETTINGS permission in order to work. \n\n You can grant permission via ADB or ROOT. \n\n To grant permission using ADB: \n\n <b>adb shell pm grant in.tsdo.essentialtools android.permission.WRITE_SECURE_SETTINGS</b> \n\n After you granted the permission, press Check Again. \n\n\n\n <i>If you have trouble using ADB, please consult internet.</i></string>
+    <string name="adb_instruction">This app needs WRITE_SECURE_SETTINGS permission in order to work. \n\n You can grant permission via ADB or ROOT. \n\n To grant permission using ADB: \n\n <b>adb shell pm grant in.tsdo.elw android.permission.WRITE_SECURE_SETTINGS</b> \n\n After you granted the permission, press Check Again. \n\n\n\n <i>If you have trouble using ADB, please consult internet.</i></string>
     <string name="check_button">Check again</string>
     <string name="copied_adb">Copied ADB command to clipboard</string>
     <string name="permission_failed">Permission check failed, please try using the ADB command again</string>
@@ -11,4 +11,8 @@
     <string name="menu_select_all">Select all</string>
     <string name="menu_deselect_all">Deselect all</string>
     <string name="menu_invert">Invert selection</string>
+    <string name="tab_fill_bar">Fill Status</string>
+    <string name="tab_hide_nav">Hide Navigation</string>
+    <string name="menu_show_system">Show system</string>
+    <string name="menu_hide_system">Hide system</string>
 </resources>

@@ -1,13 +1,10 @@
-package in.tsdo.essentialtools;
+package in.tsdo.elw;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.widget.Toast;
 
 public class PermissionDialogFragment extends DialogFragment {

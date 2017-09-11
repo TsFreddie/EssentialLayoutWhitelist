@@ -1,5 +1,6 @@
 # EssentialLayoutWhitelist
 Fill up the status bar yay.
+Now with navigation bar removal too.
 
 # Permission
 This app need WRITE_SECURE_SETTINGS permission.
@@ -20,7 +21,7 @@ To grant permission using ADB:
   3. Open cmd or terminal and goto the directory where you just extracted the tools to
   4. Enter following command:
 ```bash
-./adb shell pm grant in.tsdo.essentialtools android.permission.WRITE_SECURE_SETTINGS
+./adb shell pm grant in.tsdo.elw android.permission.WRITE_SECURE_SETTINGS
 ```
   5. On your phone, press "Check Again".
   6. Profit.
@@ -65,4 +66,5 @@ Uninstall the app will not restore your settings.
 If you want to restore the settings manually via ADB, use following command:
 ```bash
 ./adb shell settings delete global ESSENTIAL_LAYOUT_WHITELIST
+./adb shell settings delete global policy_control
 ```
