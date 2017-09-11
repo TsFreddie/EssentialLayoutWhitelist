@@ -72,4 +72,15 @@ public class AppAdapter extends BaseAdapter {
         packagePacker.setSettingString(settingString);
         notifyDataSetChanged();
     }
+
+    public void setAll(boolean checked) {
+        packagePacker.setCheckedAll(checked);
+        notifyDataSetChanged();
+    }
+
+    public void invertSelection() {
+        packagePacker.invertSelection();
+        notifyDataSetChanged();
+
+    }
 }

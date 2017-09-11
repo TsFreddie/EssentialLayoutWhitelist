@@ -57,7 +57,16 @@ public class AppPickerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_restore:
-                restoreToDefault();
+                app_adapter.setSettingString(MainActivity.DEFAULT_WHITELIST);
+                return true;
+            case R.id.menu_deselect_all:
+                app_adapter.setAll(false);
+                return true;
+            case R.id.menu_select_all:
+                app_adapter.setAll(true);
+                return true;
+            case R.id.menu_invert:
+                app_adapter.invertSelection();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -95,10 +104,5 @@ public class AppPickerActivity extends AppCompatActivity {
 
     protected void writeSettingString() {
         Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", app_adapter.getPacker().generateSettingString());
-    }
-
-    protected void restoreToDefault() {
-        Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", MainActivity.DEFAULT_WHITELIST);
-        app_adapter.setSettingString(MainActivity.DEFAULT_WHITELIST);
     }
 }

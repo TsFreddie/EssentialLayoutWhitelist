@@ -6,6 +6,9 @@
     <string name="copied_adb">Copied ADB command to clipboard</string>
     <string name="permission_failed">Permission check failed, please try using the ADB command again</string>
     <string name="root_failed">Root operation failed</string>
-    <string name="menu_restore">Restore to default</string>
     <string name="app_short_name">Layout</string>
+    <string name="menu_restore">Restore to default</string>
+    <string name="menu_select_all">Select all</string>
+    <string name="menu_deselect_all">Deselect all</string>
+    <string name="menu_invert">Invert selection</string>
 </resources>

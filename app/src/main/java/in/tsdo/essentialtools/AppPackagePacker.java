@@ -70,4 +70,16 @@ public class AppPackagePacker{
             info.setChecked(checked);
         }
     }
+
+    public void setCheckedAll(boolean checked) {
+        for (AppInfo info : appArrayList) {
+            info.setChecked(checked);
+        }
+    }
+
+    public void invertSelection() {
+        for (AppInfo info : appArrayList) {
+            info.setChecked(!info.isChecked());
+        }
+    }
 }
