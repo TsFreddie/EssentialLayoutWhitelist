@@ -84,3 +84,8 @@ com.teslacoilsw.launcher,
 ```
 
 If you want to use the official whitelist, see the [Reset Settings](#reset-settings) section.
+
+# Credits
+
+* [oracleicom](https://www.reddit.com/user/oracleicom)
+* Kevin Kowalewski
