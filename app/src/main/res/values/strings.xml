@@ -18,4 +18,5 @@
     <string name="app_icon_description">App icon</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
+    <string name="no_result">No result.</string>
 </resources>

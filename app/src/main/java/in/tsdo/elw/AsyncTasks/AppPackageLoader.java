@@ -10,7 +10,7 @@ import java.util.List;
 import in.tsdo.elw.AppPackagePacker;
 
 public class AppPackageLoader extends AsyncTaskLoader<AppPackagePacker> {
-    final PackageManager pm;
+    private final PackageManager pm;
     private AppPackagePacker packer;
 
 

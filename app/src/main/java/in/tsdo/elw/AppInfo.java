@@ -2,15 +2,14 @@ package in.tsdo.elw;
 
 import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
-import android.support.v4.os.AsyncTaskCompat;
 
-import in.tsdo.elw.AsyncTasks.AppLoadIconLabelTask;
+import in.tsdo.elw.AsyncTasks.AppLoadIconTask;
 
 public class AppInfo {
     private ApplicationInfo info;
     private Drawable icon;
     private String appName;
-    private AppLoadIconLabelTask task;
+    private AppLoadIconTask task;
     private boolean isSystem;
     private boolean[] checked;
     public AppInfo(ApplicationInfo info, boolean[] checked, boolean isSystem) {
@@ -45,7 +44,7 @@ public class AppInfo {
         return icon;
     }
 
-    public void setAppInfo(String appName) {
+    public void setAppName(String appName) {
         this.appName = appName;
     }
 
@@ -53,7 +52,7 @@ public class AppInfo {
         this.icon = icon;
     }
 
-    public void setTask(AppLoadIconLabelTask task){
+    public void setTask(AppLoadIconTask task){
         this.task = task;
     }
 

@@ -2,7 +2,6 @@ package in.tsdo.elw;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.support.v4.os.AsyncTaskCompat;
 
 import android.view.LayoutInflater;
@@ -14,8 +13,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import in.tsdo.elw.AsyncTasks.AppLoadIconLabelTask;
-import in.tsdo.elw.AsyncTasks.AppWaitLoadingTask;
+import in.tsdo.elw.AsyncTasks.AppLoadIconTask;
+import in.tsdo.elw.AsyncTasks.AppWaitIconTask;
 
 public class AppAdapter extends BaseAdapter {
     AppPackagePacker packagePacker;
@@ -79,26 +78,24 @@ public class AppAdapter extends BaseAdapter {
         holder.pkg.setText(appInfo.getInfo().packageName);
         holder.check.setTag(position);
         holder.check.setChecked(packagePacker.isChecked(type, position));
+        holder.label.setText(appInfo.getAppName());
 
         if (!appInfo.hasTask()) {
-            // No label preloaded.
             holder.icon.setImageDrawable(null);
-            holder.label.setText("");
+
             PackageManager pm = context.getPackageManager();
-            AppLoadIconLabelTask task = new AppLoadIconLabelTask();
+            AppLoadIconTask task = new AppLoadIconTask();
             appInfo.setTask(task);
-            AsyncTaskCompat.executeParallel(task, pm, appInfo, holder.label, holder.icon, holder);
+            AsyncTaskCompat.executeParallel(task, pm, appInfo, holder.icon, holder);
         }
         else {
             if (appInfo.getIcon() == null) {
                 // TODO: fix busy waiting.
-                AppWaitLoadingTask task = new AppWaitLoadingTask();
-                AsyncTaskCompat.executeParallel(task, appInfo, holder.label, holder.icon, holder);
-                holder.label.setText(null);
+                AppWaitIconTask task = new AppWaitIconTask();
+                AsyncTaskCompat.executeParallel(task, appInfo, holder.icon, holder);
                 holder.icon.setImageDrawable(null);
             }
             else {
-                holder.label.setText(appInfo.getAppName());
                 holder.icon.setImageDrawable(appInfo.getIcon());
             }
         }

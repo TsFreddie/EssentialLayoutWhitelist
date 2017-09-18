@@ -45,6 +45,7 @@ public class AppPackagePacker {
                 checked[HIDE] = true;
 
             AppInfo app = new AppInfo(appInfo, checked, isSystem);
+            app.setAppName(pm.getApplicationLabel(appInfo).toString());
             newAppHashMap.put(key, app);
         }
     }

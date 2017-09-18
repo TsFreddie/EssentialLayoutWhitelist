@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 public class ListViewFragment extends Fragment
@@ -16,6 +15,8 @@ public class ListViewFragment extends Fragment
     private AppAdapter appAdapter;
     private AppPackagePacker appPacker;
     private int type;
+    private View progressBarView;
+    private View noResultView;
     Parcelable state;
 
     @Override
@@ -30,7 +31,10 @@ public class ListViewFragment extends Fragment
 
         appAdapter = new AppAdapter(getActivity(), appPacker, type);
         appList.setAdapter(appAdapter);
-
+        View emptyView = view.findViewById(R.id.empty);
+        appList.setEmptyView(view.findViewById(R.id.empty));
+        progressBarView = emptyView.findViewById(R.id.progress_bar);
+        noResultView = emptyView.findViewById(R.id.no_result);
         return view;
     }
 
@@ -38,6 +42,8 @@ public class ListViewFragment extends Fragment
     public void onResume() {
         super.onResume();
         if(state != null) {
+            progressBarView.setVisibility(View.GONE);
+            noResultView.setVisibility(View.VISIBLE);
             appList.onRestoreInstanceState(state);
         }
     }

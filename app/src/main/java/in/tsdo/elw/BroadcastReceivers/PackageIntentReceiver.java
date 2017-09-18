@@ -11,6 +11,7 @@ public class PackageIntentReceiver extends BroadcastReceiver {
     final AppPackageLoader loader;
 
     public PackageIntentReceiver(AppPackageLoader loader) {
+        // TODO: use this.
         this.loader = loader;
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_ADDED);
@@ -20,7 +21,6 @@ public class PackageIntentReceiver extends BroadcastReceiver {
     }
 
     @Override public void onReceive(Context context, Intent intent) {
-        // Tell the loader about the change.
         loader.onContentChanged();
     }
 }
