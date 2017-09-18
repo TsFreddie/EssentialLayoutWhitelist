@@ -30,7 +30,7 @@ To grant permission using ADB:
 The default configuration may not represent Essential's official whitelist.
 
 Here's the list of whitelisted system apps in this app:
-```
+```c
 com.android.egg,
 com.google.android.calculator,
 com.google.android.calendar,
@@ -48,7 +48,12 @@ com.google.android.dialer,
 com.google.android.apps.photos,
 com.google.android.youtube,
 com.android.settings,
+
+// added since 1.3:
 com.android.phone
+
+// added since 1.4:
+com.android.systemui
 ```
 
 
