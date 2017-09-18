@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/menu_show_system"
-        android:title="@string/menu_show_system" />
+    <item android:id="@+id/search"
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="collapseActionView|always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
 
-    <item
-        android:id="@+id/menu_select_all"
-        android:title="@string/menu_select_all" />
-    <item
-        android:id="@+id/menu_deselect_all"
-        android:title="@string/menu_deselect_all" />
-    <item
-        android:id="@+id/menu_invert"
-        android:title="@string/menu_invert" />
-    <item
-        android:id="@+id/menu_restore"
-        android:title="@string/menu_restore" />
+    <group>
+        <item
+            android:id="@+id/menu_show_system"
+            android:title="@string/menu_show_system" />
+
+        <item
+            android:id="@+id/menu_select_all"
+            android:title="@string/menu_select_all" />
+        <item
+            android:id="@+id/menu_deselect_all"
+            android:title="@string/menu_deselect_all" />
+        <item
+            android:id="@+id/menu_invert"
+            android:title="@string/menu_invert" />
+        <item
+            android:id="@+id/menu_restore"
+            android:title="@string/menu_restore" />
+    </group>
 </menu>

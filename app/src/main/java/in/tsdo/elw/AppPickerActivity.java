@@ -1,27 +1,24 @@
 package in.tsdo.elw;
 
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
+import in.tsdo.elw.AsyncTasks.AppPackageLoader;
 
-public class AppPickerActivity extends AppCompatActivity {
+public class AppPickerActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<AppPackagePacker>{
 
     private Toolbar toolbar;
     private AppPackagePacker appPacker;
@@ -36,11 +33,17 @@ public class AppPickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_picker);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
 
+        SharedPreferences pref = getSharedPreferences("ESSENTIAL_TOOLS_PREF", MODE_PRIVATE);
+        showSystem = pref.getBoolean("SHOW_SYSTEM", false);
+
+        updatePacker();
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        createFragmentPageAdapter(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -49,11 +52,13 @@ public class AppPickerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences pref = getSharedPreferences("ESSENTIAL_TOOLS_PREF", MODE_PRIVATE);
-        showSystem = pref.getBoolean("SHOW_SYSTEM", false);
-        createPacker();
         if (state != null) {
+            // If resumed from pause.
+            SharedPreferences pref = getSharedPreferences("ESSENTIAL_TOOLS_PREF", MODE_PRIVATE);
+            showSystem = pref.getBoolean("SHOW_SYSTEM", false);
             viewPager.onRestoreInstanceState(state);
+            updatePacker();
+
         }
     }
 
@@ -72,42 +77,52 @@ public class AppPickerActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_app_picker, menu);
         showSystemMenu = menu.findItem(R.id.menu_show_system);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {return false;}
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (appPacker != null) {
+                    appPacker.filter(newText);
+                    notifyFragmentDataSetChanged();
+                }
+                return true;
+            }
+        });
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int currentPage = viewPager.getCurrentItem();
+        if (appPacker == null) return true;
         switch (item.getItemId()) {
             case R.id.menu_restore:
-                if (showSystem) {
-                    appPacker.setFillString(MainActivity.DEFAULT_WHITELIST);
-                } else {
-                    appPacker.setFillString(MainActivity.DEFAULT_WHITELIST);
-                    appPacker.setSystemFillString(MainActivity.DEFAULT_SYSTEM_WHITELIST);
-                }
+                appPacker.setFillString(MainActivity.DEFAULT_WHITELIST);
                 appPacker.setCheckedAll(AppPackagePacker.HIDE, false);
-                appPacker.setSystemHideString("");
-                ((ViewPagerAdapter)viewPager.getAdapter()).notifyDataSetChanged(currentPage);
+                notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_deselect_all:
 
                 appPacker.setCheckedAll(currentPage, false);
-                ((ViewPagerAdapter)viewPager.getAdapter()).notifyDataSetChanged(currentPage);
+                notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_select_all:
                 appPacker.setCheckedAll(currentPage, true);
-                ((ViewPagerAdapter)viewPager.getAdapter()).notifyDataSetChanged(currentPage);
+                notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_invert:
                 appPacker.invertSelection(currentPage);
-                ((ViewPagerAdapter)viewPager.getAdapter()).notifyDataSetChanged(currentPage);
+                notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_show_system:
-                writeSettingString();
                 showSystem = !showSystem;
-                createPacker();
-                ((ViewPagerAdapter)viewPager.getAdapter()).notifyNewPacker();
+                appPacker.setShowSystem(showSystem);
+                notifyFragmentDataSetChanged();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -123,40 +138,17 @@ public class AppPickerActivity extends AppCompatActivity {
         else {
             showSystemMenu.setTitle(R.string.menu_show_system);
         }
+        if (appPacker == null) {
+            menu.setGroupEnabled(0, false);
+        }
+        else {
+            menu.setGroupEnabled(0, true);
+        }
         return true;
     }
 
-    protected void createPacker() {
-        final PackageManager pm = getPackageManager();
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-        String fillString = getFillString();
-        String hideString = getHideString();
-        appPacker = new AppPackagePacker(getFillString(), getHideString());
-        String systemFillString = "";
-        String systemHideString = "";
-        for (ApplicationInfo appInfo : packages)
-        {
-            if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0 ||
-                    (appInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0) {
-                if (showSystem) {
-                    appPacker.add(appInfo, true);
-                }
-                else{
-                    if (fillString.contains(appInfo.packageName+",")) {
-                        systemFillString += appInfo.packageName+",";
-                    }
-                    if (hideString.contains(appInfo.packageName+",")) {
-                        systemHideString += appInfo.packageName+",";
-                    }
-                }
-            }
-            else {
-                appPacker.add(appInfo, false);
-            }
-        }
-        appPacker.setSystemFillString(systemFillString);
-        appPacker.setSystemHideString(systemHideString);
-        appPacker.sort();
+    protected void updatePacker() {
+        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
     protected String getFillString() {
@@ -186,12 +178,13 @@ public class AppPickerActivity extends AppCompatActivity {
     }
 
     protected void writeSettingString() {
+        if (appPacker == null || !appPacker.isApplied()) return;
         Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", appPacker.getFillString());
         Settings.Global.putString(getContentResolver(), "policy_control", appPacker.getHideString());
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void createFragmentPageAdapter(ViewPager viewPager) {
+        ListViewFragPageAdapter adapter = new ListViewFragPageAdapter(getSupportFragmentManager());
         // Add fragment here
         adapter.addFragment(newFragment(AppPackagePacker.FILL), getString(R.string.tab_fill_bar));
         adapter.addFragment(newFragment(AppPackagePacker.HIDE), getString(R.string.tab_hide_nav));
@@ -199,51 +192,50 @@ public class AppPickerActivity extends AppCompatActivity {
     }
 
     private ListViewFragment newFragment(int type) {
-        Bundle hideArg = new Bundle();
-        hideArg.putInt("FRAGMENT_TYPE", type);
+        Bundle args = new Bundle();
+        args.putInt("FRAGMENT_TYPE", type);
+
         ListViewFragment fragment = new ListViewFragment();
-        fragment.setArguments(hideArg);
+        fragment.setArguments(args);
         return fragment;
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<ListViewFragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
+    private void notifyFragmentDataSetChanged() {
+        if (viewPager == null || viewPager.getAdapter() == null)
+            return;
+        viewPager.getAdapter().notifyDataSetChanged();
+    }
 
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
+    private void notifyFragmentDataSetChanged(int page) {
+        if (viewPager == null || viewPager.getAdapter() == null)
+            return;
+        ((ListViewFragPageAdapter)viewPager.getAdapter()).notifyFragmentDataSetChanged(page);
+    }
 
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
+    private void notifyFragmentNewPacker(AppPackagePacker appPacker) {
+        if (viewPager == null || viewPager.getAdapter() == null)
+            return;
+        ((ListViewFragPageAdapter)viewPager.getAdapter()).notifyNewPacker(appPacker);
+        viewPager.getAdapter().notifyDataSetChanged();
+    }
 
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
+    @Override
+    public Loader<AppPackagePacker> onCreateLoader(int id, Bundle args) {
+        if (appPacker == null) {
+            appPacker = new AppPackagePacker(getFillString(), getHideString(), getPackageManager(), showSystem);
         }
+        return new AppPackageLoader(getApplicationContext(), appPacker);
+    }
 
-        public void addFragment(ListViewFragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
+    @Override
+    public void onLoadFinished(Loader<AppPackagePacker> loader, AppPackagePacker data) {
+        appPacker = data;
+        data.apply();
+        notifyFragmentNewPacker(data);
+    }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-
-        public void notifyDataSetChanged(int position) {
-            for (ListViewFragment fragment : mFragmentList) {
-                fragment.notifyDataSetChanged();
-            }
-        }
-
-        public void notifyNewPacker() {
-            for (ListViewFragment fragment : mFragmentList) {
-                fragment.notifyNewPacker();
-            }
-        }
+    @Override
+    public void onLoaderReset(Loader<AppPackagePacker> loader) {
+        notifyFragmentNewPacker(null);
     }
 }
