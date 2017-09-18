@@ -234,6 +234,6 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoaderReset(Loader<AppPackagePacker> loader) {
-        notifyFragmentNewPacker(null);
+
     }
 }

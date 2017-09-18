@@ -7,14 +7,20 @@ android {
         applicationId 'in.tsdo.elw'
         minSdkVersion 25
         targetSdkVersion 25
-        versionCode 6
-        versionName "1.4"
+        versionCode 7
+        versionName "1.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".dev"
+            debuggable true
+            minifyEnabled false
+            versionNameSuffix '-dev'
         }
     }
     productFlavors {
