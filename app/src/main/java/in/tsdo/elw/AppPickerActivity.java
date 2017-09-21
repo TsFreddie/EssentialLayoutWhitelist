@@ -1,6 +1,7 @@
 package in.tsdo.elw;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
@@ -8,22 +9,24 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.util.HashMap;
+
 import in.tsdo.elw.AsyncTasks.AppPackageLoader;
 
-public class AppPickerActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<AppPackagePacker>{
+public class AppPickerActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<HashMap<String, AppInfo>>{
 
     private Toolbar toolbar;
     private AppPackagePacker appPacker;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private boolean showSystem;
+    private SearchView searchView;
     MenuItem showSystemMenu;
     Parcelable state;
 
@@ -38,13 +41,16 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
 
         SharedPreferences pref = getSharedPreferences("ESSENTIAL_TOOLS_PREF", MODE_PRIVATE);
         showSystem = pref.getBoolean("SHOW_SYSTEM", false);
+        appPacker = new AppPackagePacker(getFillString(), getHideString(), showSystem);
 
-        updatePacker();
+        getSupportLoaderManager().initLoader(0, null, this);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         createFragmentPageAdapter(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        notifyFragmentNewPacker(appPacker);
 
     }
 
@@ -56,7 +62,6 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
             SharedPreferences pref = getSharedPreferences("ESSENTIAL_TOOLS_PREF", MODE_PRIVATE);
             showSystem = pref.getBoolean("SHOW_SYSTEM", false);
             viewPager.onRestoreInstanceState(state);
-            updatePacker();
 
         }
     }
@@ -76,14 +81,14 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_app_picker, menu);
         showSystemMenu = menu.findItem(R.id.menu_show_system);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {return false;}
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (appPacker != null) {
+                if (appPacker != null && appPacker.isApplied()) {
                     appPacker.filter(newText);
                     notifyFragmentDataSetChanged();
                 }
@@ -145,10 +150,6 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
         return true;
     }
 
-    protected void updatePacker() {
-        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
-    }
-
     protected String getFillString() {
         String settingString = Settings.Global.getString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST");
         if (settingString == null) {
@@ -177,8 +178,8 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
 
     protected void writeSettingString() {
         if (appPacker == null || !appPacker.isApplied()) return;
-        Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", appPacker.getFillString());
-        Settings.Global.putString(getContentResolver(), "policy_control", appPacker.getHideString());
+        Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", appPacker.generateFillString());
+        Settings.Global.putString(getContentResolver(), "policy_control", appPacker.generateHideString());
     }
 
     private void createFragmentPageAdapter(ViewPager viewPager) {
@@ -218,22 +219,25 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
     }
 
     @Override
-    public Loader<AppPackagePacker> onCreateLoader(int id, Bundle args) {
-        if (appPacker == null) {
-            appPacker = new AppPackagePacker(getFillString(), getHideString(), getPackageManager(), showSystem);
-        }
+    public Loader<HashMap<String, AppInfo>> onCreateLoader(int id, Bundle args) {
         return new AppPackageLoader(getApplicationContext(), appPacker);
     }
 
     @Override
-    public void onLoadFinished(Loader<AppPackagePacker> loader, AppPackagePacker data) {
-        appPacker = data;
-        data.apply();
-        notifyFragmentNewPacker(data);
+    public void onLoadFinished(Loader<HashMap<String, AppInfo>> loader, HashMap<String, AppInfo> data) {
+        if (data == null)
+            return;
+        appPacker.applyAppMap(data);
+        if (searchView.getQuery() != null) {
+            if (appPacker != null && appPacker.isApplied()) {
+                appPacker.filter(searchView.getQuery().toString());
+            }
+        }
+        notifyFragmentDataSetChanged();
     }
 
     @Override
-    public void onLoaderReset(Loader<AppPackagePacker> loader) {
+    public void onLoaderReset(Loader<HashMap<String, AppInfo>> loader) {
 
     }
 }

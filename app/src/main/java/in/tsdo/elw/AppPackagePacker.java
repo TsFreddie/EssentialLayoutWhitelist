@@ -1,8 +1,5 @@
 package in.tsdo.elw;
 
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,28 +7,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AppPackagePacker {
-    final static int FILL = 0;
-    final static int HIDE = 1;
+    public final static int FILL = 0;
+    public final static int HIDE = 1;
 
     private String fillString;
     private String hideString;
     private HashMap<String, AppInfo> appHashMap;
-    private HashMap<String, AppInfo> newAppHashMap;
     private ArrayList<AppInfo> filteredAppList;
-    private PackageManager pm;
 
     private boolean showSystem;
 
-    public AppPackagePacker(String fillString, String hideString, PackageManager pm, boolean showSystem) {
+    public AppPackagePacker(String fillString, String hideString, boolean showSystem) {
         this.fillString = fillString;
         this.hideString = hideString;
         this.appHashMap = null;
-        this.newAppHashMap = null;
         this.filteredAppList = new ArrayList<>();
         this.showSystem = showSystem;
-        this.pm = pm;
     }
 
+    /*
     public void add(ApplicationInfo appInfo, boolean isSystem) {
         String key = appInfo.packageName;
         if (appHashMap != null && appHashMap.containsKey(key)) {
@@ -49,14 +43,10 @@ public class AppPackagePacker {
             newAppHashMap.put(key, app);
         }
     }
+    */
 
-    public void reset() {
-        newAppHashMap = new HashMap<>();
-    }
-
-    public void apply() {
-        appHashMap = newAppHashMap;
-        setFilteredAppList();
+    public void applyAppMap(HashMap<String, AppInfo> appHashMap) {
+        this.appHashMap = appHashMap;
     }
 
     public boolean isApplied() {
@@ -65,6 +55,16 @@ public class AppPackagePacker {
 
     public AppInfo get(int index) {
         return filteredAppList.get(index);
+    }
+
+    public boolean contains(String packageName) {
+        if (appHashMap == null)
+            return false;
+        return appHashMap.containsKey(packageName);
+    }
+
+    public AppInfo get(String key) {
+        return appHashMap.get(key);
     }
 
     public void setChecked(int type, int index, boolean checked) {
@@ -92,7 +92,7 @@ public class AppPackagePacker {
         });
     }
 
-    public String getFillString() {
+    public String generateFillString() {
         this.fillString = "";
         Iterator<String> iter = appHashMap.keySet().iterator();
         while (iter.hasNext()) {
@@ -105,7 +105,7 @@ public class AppPackagePacker {
         return this.fillString;
     }
 
-    public String getHideString() {
+    public String generateHideString() {
         this.hideString = "immersive.navigation=";
         Iterator<String> iter = appHashMap.keySet().iterator();
         while (iter.hasNext()) {
@@ -115,6 +115,14 @@ public class AppPackagePacker {
                 this.hideString += info.getInfo().packageName+",";
             }
         }
+        return this.hideString;
+    }
+
+    public String getFillString() {
+        return this.fillString;
+    }
+
+    public String getHideString() {
         return this.hideString;
     }
 
@@ -160,7 +168,6 @@ public class AppPackagePacker {
         sort();
     }
 
-
     public void filter(String filter) {
         if (filter == null) {
             setFilteredAppList();
@@ -180,7 +187,7 @@ public class AppPackagePacker {
         sort();
     }
 
-    private boolean checkString(String str, String pkg){
+    public static boolean checkString(String str, String pkg){
         // TODO: regex
 
         String matchStringStart = String.format("%s,", pkg);

@@ -3,7 +3,6 @@ package in.tsdo.elw;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.os.AsyncTaskCompat;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

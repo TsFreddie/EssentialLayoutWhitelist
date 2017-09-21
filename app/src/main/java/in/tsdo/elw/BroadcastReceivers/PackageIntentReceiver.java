@@ -11,11 +11,11 @@ public class PackageIntentReceiver extends BroadcastReceiver {
     final AppPackageLoader loader;
 
     public PackageIntentReceiver(AppPackageLoader loader) {
-        // TODO: use this.
         this.loader = loader;
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         filter.addDataScheme("package");
         loader.getContext().registerReceiver(this, filter);
     }
