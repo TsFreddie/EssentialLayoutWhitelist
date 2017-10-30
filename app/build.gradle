@@ -7,8 +7,8 @@ android {
         applicationId 'in.tsdo.elw'
         minSdkVersion 25
         targetSdkVersion 25
-        versionCode 8
-        versionName "1.42"
+        versionCode 10
+        versionName "2.00"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

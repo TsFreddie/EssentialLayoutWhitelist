@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Layout Whitelist Editor</string>
+    <string name="app_name">Navigation Bar Editor</string>
     <string name="root_grant">Root detected, do you want to grant me permission using root?</string>
     <string name="adb_instruction">This app needs WRITE_SECURE_SETTINGS permission in order to work. \n\n You can grant permission via ADB or ROOT. \n\n To grant permission using ADB: \n\n <b>adb shell pm grant in.tsdo.elw android.permission.WRITE_SECURE_SETTINGS</b> \n\n After you granted the permission, press Check Again. \n\n\n\n <i>If you have trouble using ADB, please consult internet.</i></string>
     <string name="check_button">Check again</string>

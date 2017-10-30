@@ -25,26 +25,6 @@ public class AppPackagePacker {
         this.showSystem = showSystem;
     }
 
-    /*
-    public void add(ApplicationInfo appInfo, boolean isSystem) {
-        String key = appInfo.packageName;
-        if (appHashMap != null && appHashMap.containsKey(key)) {
-            newAppHashMap.put(key, appHashMap.get(key));
-        }
-        else {
-            boolean[] checked = {false, false};
-            if (checkString(fillString, appInfo.packageName))
-                checked[FILL] = true;
-            if (checkString(hideString, appInfo.packageName))
-                checked[HIDE] = true;
-
-            AppInfo app = new AppInfo(appInfo, checked, isSystem);
-            app.setAppName(pm.getApplicationLabel(appInfo).toString());
-            newAppHashMap.put(key, app);
-        }
-    }
-    */
-
     public void applyAppMap(HashMap<String, AppInfo> appHashMap) {
         this.appHashMap = appHashMap;
     }

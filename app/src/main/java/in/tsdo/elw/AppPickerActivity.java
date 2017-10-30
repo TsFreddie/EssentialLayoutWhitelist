@@ -102,24 +102,25 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int currentPage = viewPager.getCurrentItem();
+        // TODO: Hmm, ever want your whitelist back?
         if (appPacker == null) return true;
         switch (item.getItemId()) {
             case R.id.menu_restore:
-                appPacker.setFillString(MainActivity.DEFAULT_WHITELIST);
+                //appPacker.setFillString(MainActivity.DEFAULT_WHITELIST);
                 appPacker.setCheckedAll(AppPackagePacker.HIDE, false);
                 notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_deselect_all:
 
-                appPacker.setCheckedAll(currentPage, false);
+                appPacker.setCheckedAll(AppPackagePacker.HIDE, false);
                 notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_select_all:
-                appPacker.setCheckedAll(currentPage, true);
+                appPacker.setCheckedAll(AppPackagePacker.HIDE, true);
                 notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_invert:
-                appPacker.invertSelection(currentPage);
+                appPacker.invertSelection(AppPackagePacker.HIDE);
                 notifyFragmentDataSetChanged(currentPage);
                 return true;
             case R.id.menu_show_system:
@@ -151,6 +152,9 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
     }
 
     protected String getFillString() {
+        // TODO: hey whitelist
+        return "";
+        /*
         String settingString = Settings.Global.getString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST");
         if (settingString == null) {
             settingString = MainActivity.DEFAULT_WHITELIST;
@@ -159,6 +163,7 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
             settingString += ",";
         }
         return settingString;
+        */
     }
 
     protected String getHideString() {
@@ -178,14 +183,13 @@ public class AppPickerActivity extends AppCompatActivity implements LoaderManage
 
     protected void writeSettingString() {
         if (appPacker == null || !appPacker.isApplied()) return;
-        Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", appPacker.generateFillString());
+        //Settings.Global.putString(getContentResolver(), "ESSENTIAL_LAYOUT_WHITELIST", appPacker.generateFillString());
         Settings.Global.putString(getContentResolver(), "policy_control", appPacker.generateHideString());
     }
 
     private void createFragmentPageAdapter(ViewPager viewPager) {
         ListViewFragPageAdapter adapter = new ListViewFragPageAdapter(getSupportFragmentManager());
         // Add fragment here
-        adapter.addFragment(newFragment(AppPackagePacker.FILL), getString(R.string.tab_fill_bar));
         adapter.addFragment(newFragment(AppPackagePacker.HIDE), getString(R.string.tab_hide_nav));
         viewPager.setAdapter(adapter);
     }
